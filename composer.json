@@ -1,0 +1,17 @@
+{
+    "name": "waaiy/api",
+    "description": "Waaiy API Connector",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Omer Selman Anadolulu",
+            "email": "omeranadolulu@msn.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.9"
+    }
+}
