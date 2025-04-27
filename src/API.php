@@ -23,7 +23,7 @@ class API
     public function adjust($ayar_slug)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/setttings", ['headers' => [
+            $response = $this->_client->request("POST", $this->base_url . "/settings", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
