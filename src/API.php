@@ -27,7 +27,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $ayar_slug
             ]]);
             $response = json_decode($response->getBody());
@@ -48,7 +48,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $ayar_slug,
                 "p_prefix" => $this->page_prefix,
                 "bc_prefix" => $this->blog_category_prefix,
@@ -72,7 +72,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $slug
             ]]);
             $response = json_decode($response->getBody());
@@ -93,7 +93,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $slug
             ]]);
             $response = json_decode($response->getBody());
@@ -114,7 +114,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $slug
             ]]);
             $response = json_decode($response->getBody());
@@ -135,7 +135,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "category_slug" => $slug,
                 "page" => $page,
                 "limit" => $limit,
@@ -159,7 +159,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "category_slug" => $slug,
                 "page" => $page,
                 "limit" => $limit,
@@ -183,7 +183,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $parent_slug
             ]]);
             $response = json_decode($response->getBody());
@@ -204,7 +204,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $parent_slug
             ]]);
             $response = json_decode($response->getBody());
@@ -225,7 +225,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
 
             ]]);
             $response = json_decode($response->getBody());
@@ -246,7 +246,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "slug" => $slug,
                 "limit" => $limit,
                 "page" => $page
@@ -269,7 +269,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "query" => [
+            ], "form_parms" => [
                 "id" => $id,
                 "url" => $url,
             ]]);
