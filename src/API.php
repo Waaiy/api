@@ -17,7 +17,7 @@ class API
 
     public function __construct()
     {
-        $this->_client = new Client();
+        $this->_client = new Client(["verify"=>false]);
     }
 
     public function adjust($ayar_slug)
