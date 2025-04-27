@@ -1,5 +1,5 @@
 <?php
-
+namespace Waaiy;
 
 use GuzzleHttp\Client;
 
