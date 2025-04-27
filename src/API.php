@@ -28,11 +28,10 @@ class API
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
             ], "form_parms" => [
-                "slug" => $ayar_slug
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
-                return $response->data;
+                return $response->data->{$ayar_slug};
             } else {
                 throw new \Exception($response->message);
             }
