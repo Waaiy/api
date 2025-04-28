@@ -244,7 +244,7 @@ class API
     public function dataset($slug, $limit, $page)
     {
         try {
-            $response = $this->_client->request("POST",  "/languages", ['headers' => [
+            $response = $this->_client->request("POST",  "/dataset", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
