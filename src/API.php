@@ -15,6 +15,8 @@ class API
     public $blog_category_prefix = "blogs";
     public $product_category_prefix = "products";
 
+    public $lang_short_name="TR";
+
     public function __construct()
     {
         $this->_client = new Client(["verify"=>false]);
@@ -49,6 +51,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "form_parms" => [
                 "slug" => $ayar_slug,
+                "lang_short_name" => $this->lang_short_name,
                 "p_prefix" => $this->page_prefix,
                 "bc_prefix" => $this->blog_category_prefix,
                 "pc_prefix" => $this->product_category_prefix,
