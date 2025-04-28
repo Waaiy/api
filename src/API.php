@@ -96,7 +96,8 @@ class API
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
             ], "form_params" => [
-                "slug" => $slug
+                "slug" => $slug,
+                "lang_short_name"=>$this->lang_short_name
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
