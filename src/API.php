@@ -19,17 +19,17 @@ class API
 
     public function __construct()
     {
-        $this->_client = new Client(["verify"=>false]);
+        $this->_client = new Client(["base_uri"=>$this->base_url ,"verify"=>false]);
     }
 
     public function adjust($ayar_slug)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/settings", ['headers' => [
+            $response = $this->_client->request("POST", "/settings", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
@@ -45,11 +45,11 @@ class API
     public function menuitems($ayar_slug)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/menuitems", ['headers' => [
+            $response = $this->_client->request("POST",  "/menuitems", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "slug" => $ayar_slug,
                 "lang_short_name" => $this->lang_short_name,
                 "p_prefix" => $this->page_prefix,
@@ -70,11 +70,11 @@ class API
     public function blog($slug)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/blog", ['headers' => [
+            $response = $this->_client->request("POST",  "/blog", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "slug" => $slug
             ]]);
             $response = json_decode($response->getBody());
@@ -91,11 +91,11 @@ class API
     public function page($slug)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/page", ['headers' => [
+            $response = $this->_client->request("POST",  "/page", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "slug" => $slug
             ]]);
             $response = json_decode($response->getBody());
@@ -112,11 +112,11 @@ class API
     public function product($slug)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/product", ['headers' => [
+            $response = $this->_client->request("POST",  "/product", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "slug" => $slug
             ]]);
             $response = json_decode($response->getBody());
@@ -133,11 +133,11 @@ class API
     public function blogcategory($slug, $page, $limit, $lang_short_name)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/blogcategory", ['headers' => [
+            $response = $this->_client->request("POST",  "/blogcategory", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "category_slug" => $slug,
                 "page" => $page,
                 "limit" => $limit,
@@ -157,11 +157,11 @@ class API
     public function productcategory($slug, $page, $limit, $lang_short_name)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/productcategory", ['headers' => [
+            $response = $this->_client->request("POST",  "/productcategory", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "category_slug" => $slug,
                 "page" => $page,
                 "limit" => $limit,
@@ -181,11 +181,11 @@ class API
     public function blogcategories($parent_slug = "")
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/blogcategories", ['headers' => [
+            $response = $this->_client->request("POST",  "/blogcategories", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "slug" => $parent_slug
             ]]);
             $response = json_decode($response->getBody());
@@ -202,11 +202,11 @@ class API
     public function productcategories($parent_slug = "")
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/productcategpries", ['headers' => [
+            $response = $this->_client->request("POST",  "/productcategpries", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "slug" => $parent_slug
             ]]);
             $response = json_decode($response->getBody());
@@ -223,11 +223,11 @@ class API
     public function languages($parent_slug = "")
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/languages", ['headers' => [
+            $response = $this->_client->request("POST",  "/languages", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
 
             ]]);
             $response = json_decode($response->getBody());
@@ -244,11 +244,11 @@ class API
     public function dataset($slug, $limit, $page)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/languages", ['headers' => [
+            $response = $this->_client->request("POST",  "/languages", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "slug" => $slug,
                 "limit" => $limit,
                 "page" => $page
@@ -267,11 +267,11 @@ class API
     public function media($id, $url)
     {
         try {
-            $response = $this->_client->request("POST", $this->base_url . "/languages", ['headers' => [
+            $response = $this->_client->request("POST",  "/languages", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_parms" => [
+            ], "form_params" => [
                 "id" => $id,
                 "url" => $url,
             ]]);
