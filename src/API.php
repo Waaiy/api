@@ -133,7 +133,7 @@ class API
         }
     }
 
-    public function blogcategory($slug, $page, $limit, $lang_short_name)
+    public function blogcategory($slug, $page, $limit)
     {
         try {
             $response = $this->_client->request("POST",  "/blogcategory", ['headers' => [
@@ -144,7 +144,7 @@ class API
                 "category_slug" => $slug,
                 "page" => $page,
                 "limit" => $limit,
-                "lang_short_name" => $lang_short_name,
+                "lang_short_name" => $this->lang_short_name,
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
