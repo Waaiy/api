@@ -5,7 +5,6 @@ use GuzzleHttp\Client;
 
 class API
 {
-    public $base_url = "https://api.waaiy.dev/";
     public $public_key = "";
     public $private_key = "";
     public $user_key = "";
@@ -17,9 +16,9 @@ class API
 
     public $lang_short_name="TR";
 
-    public function __construct()
+    public function __construct($base_url)
     {
-        $this->_client = new Client(["base_uri"=>$this->base_url ,"verify"=>false]);
+        $this->_client = new Client(["base_uri"=>$base_url ,"verify"=>false]);
     }
 
     public function adjust($ayar_slug)
