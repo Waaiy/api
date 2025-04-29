@@ -139,9 +139,10 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
+            ],"query"=>[
+                "page" => $page,
             ], "form_params" => [
                 "category_slug" => $slug,
-                "page" => $page,
                 "limit" => $limit,
                 "lang_short_name" => $this->lang_short_name,
             ]]);
@@ -163,9 +164,10 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
+            ],"query"=>[
+                "page" => $page,
             ], "form_params" => [
                 "category_slug" => $slug,
-                "page" => $page,
                 "limit" => $limit,
                 "lang_short_name" => $lang_short_name,
             ]]);
@@ -250,10 +252,11 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ],"query"=>[
+                "page" => $page,
+            ],"form_params" => [
                 "slug" => $slug,
-                "limit" => $limit,
-                "page" => $page
+                "limit" => $limit
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
