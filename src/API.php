@@ -183,7 +183,7 @@ class API
         }
     }
 
-    public function productcategory($slug, $page, $limit, $lang_short_name)
+    public function productcategory($slug, $page, $limit)
     {
         try {
             $response = $this->_client->request("GET",  "/productcategory", ['headers' => [
