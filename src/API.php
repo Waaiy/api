@@ -166,7 +166,7 @@ class API
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
-                $response->data->_BLOGS=array_map(function($item) {
+                $response->data->__BLOGS=array_map(function($item) {
                     $item->_PHOTOS=json_decode(base64_decode($item->_PHOTOS));
                     $item->_VIDEOS=json_decode(base64_decode($item->_VIDEOS));
                     $item->_FILES=json_decode(base64_decode($item->_FILES));
@@ -174,7 +174,7 @@ class API
                     $item->_TABS=json_decode(base64_decode($item->_TABS));
                     $item->_FIELDS=json_decode(base64_decode($item->_FIELDS));
                     return $item;
-                },$response->data->_BLOGS);
+                },$response->data->__BLOGS);
                 return $response->data;
             } else {
                 throw new \Exception($response->message);
@@ -201,7 +201,7 @@ class API
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
 
-                $response->data->_PRODUCTS=array_map(function($item) {
+                $response->data->__PRODUCTS=array_map(function($item) {
                     $item->_PHOTOS=json_decode(base64_decode($item->_PHOTOS));
                     $item->_VIDEOS=json_decode(base64_decode($item->_VIDEOS));
                     $item->_FILES=json_decode(base64_decode($item->_FILES));
@@ -209,7 +209,7 @@ class API
                     $item->_TABS=json_decode(base64_decode($item->_TABS));
                     $item->_FIELDS=json_decode(base64_decode($item->_FIELDS));
                     return $item;
-                },$response->data->_PRODUCTS);
+                },$response->data->__PRODUCTS);
                 return $response->data;
             } else {
                 throw new \Exception($response->message);
