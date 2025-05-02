@@ -194,7 +194,7 @@ class API
                 "page" => $page,
                 "category_slug" => $slug,
                 "limit" => $limit,
-                "lang_short_name" => $lang_short_name,
+                "lang_short_name" => $this->lang_short_name,
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
