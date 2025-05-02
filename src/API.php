@@ -48,7 +48,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ], "query" => [
                 "slug" => $ayar_slug,
                 "lang_short_name" => $this->lang_short_name,
                 "p_prefix" => $this->page_prefix,
@@ -73,7 +73,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ], "query" => [
                 "slug" => $slug,
                 "lang_short_name"=>$this->lang_short_name
             ]]);
@@ -101,7 +101,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ], "query" => [
                 "slug" => $slug,
                 "lang_short_name"=>$this->lang_short_name
             ]]);
@@ -129,7 +129,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ], "query" => [
                 "slug" => $slug,
                 "lang_short_name"=>$this->lang_short_name
             ]]);
@@ -159,7 +159,6 @@ class API
                 "W-Private-Key" => $this->private_key,
             ],"query"=>[
                 "page" => $page,
-            ], "form_params" => [
                 "category_slug" => $slug,
                 "limit" => $limit,
                 "lang_short_name" => $this->lang_short_name,
@@ -193,7 +192,6 @@ class API
                 "W-Private-Key" => $this->private_key,
             ],"query"=>[
                 "page" => $page,
-            ], "form_params" => [
                 "category_slug" => $slug,
                 "limit" => $limit,
                 "lang_short_name" => $lang_short_name,
@@ -226,7 +224,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ], "query" => [
                 "slug" => $parent_slug
             ]]);
             $response = json_decode($response->getBody());
@@ -247,7 +245,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ], "query" => [
                 "slug" => $parent_slug
             ]]);
             $response = json_decode($response->getBody());
@@ -268,8 +266,6 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
-
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
@@ -291,7 +287,6 @@ class API
                 "W-Private-Key" => $this->private_key,
             ],"query"=>[
                 "page" => $page,
-            ],"form_params" => [
                 "slug" => $slug,
                 "limit" => $limit
             ]]);
@@ -313,7 +308,7 @@ class API
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
-            ], "form_params" => [
+            ], "query" => [
                 "id" => $id,
                 "url" => $url,
             ]]);
