@@ -198,7 +198,6 @@ class API
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
-
                 $response->data->__PRODUCTS=array_map(function($item) {
                     $item->_PHOTOS=json_decode(base64_decode($item->_PHOTOS));
                     $item->_VIDEOS=json_decode(base64_decode($item->_VIDEOS));
