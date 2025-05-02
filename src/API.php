@@ -83,7 +83,7 @@ class API
                 $response->data->_VIDEOS=json_decode(base64_decode($response->data->_VIDEOS));
                 $response->data->_FILES=json_decode(base64_decode($response->data->_FILES));
                 $response->data->_ACORDIONS=json_decode(base64_decode($response->data->_ACORDIONS));
-                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS);
+                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS));
                 $response->data->_FIELDS=json_decode(base64_decode($response->data->_FIELDS));
                 return $response->data;
             } else {
@@ -111,7 +111,7 @@ class API
                 $response->data->_VIDEOS=json_decode(base64_decode($response->data->_VIDEOS));
                 $response->data->_FILES=json_decode(base64_decode($response->data->_FILES));
                 $response->data->_ACORDIONS=json_decode(base64_decode($response->data->_ACORDIONS));
-                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS);
+                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS));
                 $response->data->_FIELDS=json_decode(base64_decode($response->data->_FIELDS));
                 return $response->data;
             } else {
@@ -139,7 +139,7 @@ class API
                 $response->data->_VIDEOS=json_decode(base64_decode($response->data->_VIDEOS));
                 $response->data->_FILES=json_decode(base64_decode($response->data->_FILES));
                 $response->data->_ACORDIONS=json_decode(base64_decode($response->data->_ACORDIONS));
-                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS);
+                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS));
                 $response->data->_FIELDS=json_decode(base64_decode($response->data->_FIELDS));
                 return $response->data;
             } else {
