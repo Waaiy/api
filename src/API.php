@@ -24,7 +24,7 @@ class API
     public function adjust($ayar_slug)
     {
         try {
-            $response = $this->_client->request("POST", "/settings", ['headers' => [
+            $response = $this->_client->request("GET", "/settings", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -44,7 +44,7 @@ class API
     public function menuitems($ayar_slug)
     {
         try {
-            $response = $this->_client->request("POST",  "/menuitems", ['headers' => [
+            $response = $this->_client->request("GET",  "/menuitems", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -69,7 +69,7 @@ class API
     public function blog($slug)
     {
         try {
-            $response = $this->_client->request("POST",  "/blog", ['headers' => [
+            $response = $this->_client->request("GET",  "/blog", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -97,7 +97,7 @@ class API
     public function page($slug)
     {
         try {
-            $response = $this->_client->request("POST",  "/page", ['headers' => [
+            $response = $this->_client->request("GET",  "/page", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -125,7 +125,7 @@ class API
     public function product($slug)
     {
         try {
-            $response = $this->_client->request("POST",  "/product", ['headers' => [
+            $response = $this->_client->request("GET",  "/product", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -153,7 +153,7 @@ class API
     public function blogcategory($slug, $page, $limit)
     {
         try {
-            $response = $this->_client->request("POST",  "/blogcategory", ['headers' => [
+            $response = $this->_client->request("GET",  "/blogcategory", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -186,7 +186,7 @@ class API
     public function productcategory($slug, $page, $limit, $lang_short_name)
     {
         try {
-            $response = $this->_client->request("POST",  "/productcategory", ['headers' => [
+            $response = $this->_client->request("GET",  "/productcategory", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -220,7 +220,7 @@ class API
     public function blogcategories($parent_slug = "")
     {
         try {
-            $response = $this->_client->request("POST",  "/blogcategories", ['headers' => [
+            $response = $this->_client->request("GET",  "/blogcategories", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -241,7 +241,7 @@ class API
     public function productcategories($parent_slug = "")
     {
         try {
-            $response = $this->_client->request("POST",  "/productcategpries", ['headers' => [
+            $response = $this->_client->request("GET",  "/productcategpries", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -262,7 +262,7 @@ class API
     public function languages($parent_slug = "")
     {
         try {
-            $response = $this->_client->request("POST",  "/languages", ['headers' => [
+            $response = $this->_client->request("GET",  "/languages", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -281,7 +281,7 @@ class API
     public function dataset($slug, $limit, $page)
     {
         try {
-            $response = $this->_client->request("POST",  "/dataset", ['headers' => [
+            $response = $this->_client->request("GET",  "/dataset", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -304,7 +304,7 @@ class API
     public function media($id, $url)
     {
         try {
-            $response = $this->_client->request("POST",  "/media", ['headers' => [
+            $response = $this->_client->request("GET",  "/media", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
