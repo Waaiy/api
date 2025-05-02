@@ -79,6 +79,12 @@ class API
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
+                $response->data->_PHOTOS=json_decode(base64_decode($response->data->_PHOTOS));
+                $response->data->_VIDEOS=json_decode(base64_decode($response->data->_VIDEOS));
+                $response->data->_FILES=json_decode(base64_decode($response->data->_FILES));
+                $response->data->_ACORDIONS=json_decode(base64_decode($response->data->_ACORDIONS));
+                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS);
+                $response->data->_FIELDS=json_decode(base64_decode($response->data->_FIELDS));
                 return $response->data;
             } else {
                 throw new \Exception($response->message);
@@ -101,6 +107,12 @@ class API
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
+                $response->data->_PHOTOS=json_decode(base64_decode($response->data->_PHOTOS));
+                $response->data->_VIDEOS=json_decode(base64_decode($response->data->_VIDEOS));
+                $response->data->_FILES=json_decode(base64_decode($response->data->_FILES));
+                $response->data->_ACORDIONS=json_decode(base64_decode($response->data->_ACORDIONS));
+                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS);
+                $response->data->_FIELDS=json_decode(base64_decode($response->data->_FIELDS));
                 return $response->data;
             } else {
                 throw new \Exception($response->message);
@@ -123,6 +135,12 @@ class API
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
+                $response->data->_PHOTOS=json_decode(base64_decode($response->data->_PHOTOS));
+                $response->data->_VIDEOS=json_decode(base64_decode($response->data->_VIDEOS));
+                $response->data->_FILES=json_decode(base64_decode($response->data->_FILES));
+                $response->data->_ACORDIONS=json_decode(base64_decode($response->data->_ACORDIONS));
+                $response->data->_TABS=json_decode(base64_decode($response->data->_TABS);
+                $response->data->_FIELDS=json_decode(base64_decode($response->data->_FIELDS));
                 return $response->data;
             } else {
                 throw new \Exception($response->message);
