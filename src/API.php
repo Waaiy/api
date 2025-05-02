@@ -323,14 +323,16 @@ class API
         }
     }
     public function cover_image($content,$media_url){
-        if(is_string($content)){
-            $content=json_decode($content);
+        if(is_string($content->_PHOTOS)){
+            $content->_PHOTOS=json_decode($content->_PHOTOS);
         }
-        $cover=array_map(function($item){
-            if($item->is_cover==1){
-                return $item;
-            }
-        },$content->_PHOTOS);
-        return $this->media($cover[0]->medya_id,$media_url);
+        if(count($content->_PHOTOS)>0) {
+            $cover = array_map(function ($item) {
+                if ($item->is_cover == 1) {
+                    return $item;
+                }
+            }, $content->_PHOTOS);
+            return $this->media($cover[0]->medya_id, $media_url);
+        }
     }
 }
