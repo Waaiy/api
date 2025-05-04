@@ -240,7 +240,7 @@ class API
     public function productcategories($parent_slug = "")
     {
         try {
-            $response = $this->_client->request("GET",  "/productcategpries", ['headers' => [
+            $response = $this->_client->request("GET",  "/productcategories", ['headers' => [
                 "W-User-Key" => $this->user_key,
                 "W-Public-Key" => $this->public_key,
                 "W-Private-Key" => $this->private_key,
@@ -258,7 +258,7 @@ class API
         }
     }
 
-    public function languages($parent_slug = "")
+    public function languages()
     {
         try {
             $response = $this->_client->request("GET",  "/languages", ['headers' => [
