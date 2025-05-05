@@ -13,8 +13,7 @@ class API
     public $page_prefix = "page";
     public $blog_category_prefix = "blogs";
     public $product_category_prefix = "products";
-
-    public $lang_short_name="TR";
+    public $lang_session_key="_lang_id";
 
     public function __construct($base_url)
     {
@@ -50,7 +49,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $ayar_slug,
-                "lang_short_name" => $this->lang_short_name,
+                "lang_short_name" => $this->active_lang()->_LANG_SHORT_NAME,
                 "p_prefix" => $this->page_prefix,
                 "bc_prefix" => $this->blog_category_prefix,
                 "pc_prefix" => $this->product_category_prefix,
@@ -75,7 +74,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $slug,
-                "lang_short_name"=>$this->lang_short_name
+                "lang_short_name"=>$this->active_lang()->_LANG_SHORT_NAME
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
@@ -103,7 +102,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $slug,
-                "lang_short_name"=>$this->lang_short_name
+                "lang_short_name"=>$this->active_lang()->_LANG_SHORT_NAME
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
@@ -131,7 +130,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $slug,
-                "lang_short_name"=>$this->lang_short_name
+                "lang_short_name"=>$this->active_lang()->_LANG_SHORT_NAME
             ]]);
             $response = json_decode($response->getBody());
             if ($response->status == 1) {
@@ -276,7 +275,6 @@ class API
             throw new \Exception($e->getMessage());
         }
     }
-
     public function dataset($slug, $limit, $page)
     {
         try {
@@ -332,6 +330,26 @@ class API
                 }
             }, $content->_PHOTOS);
             return $this->media($cover[0]->medya_id, $media_url);
+        }
+    }
+    public function active_lang(){
+        $languages=$this->languages();
+        if (isset($_SESSION[$this->lang_session_key])) {
+            $dilbilgi = array_map(function ($item) {
+                if ($item->_ID === $_SESSION[$this->lang_session_key]){
+                    return $item;
+                }else{
+                    return false;
+                }
+            }, $languages);
+            foreach ($dilbilgi as $key => $ditem) {
+                if ($ditem === false) {
+                    continue;
+                }
+                return $ditem;
+            }
+        } else {
+            return $languages[0];
         }
     }
 }
