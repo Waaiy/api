@@ -58,7 +58,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $ayar_slug,
-                "lang_short_name" => $this->active_lang()->_LANG_SHORT_NAME,
+                "lang_id" => $this->active_lang()->_ID,
                 "p_prefix" => $this->page_prefix,
                 "bc_prefix" => $this->blog_category_prefix,
                 "pc_prefix" => $this->product_category_prefix,
@@ -90,7 +90,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $slug,
-                "lang_short_name" => $this->active_lang()->_LANG_SHORT_NAME
+                "lang_id" => $this->active_lang()->_ID
             ]]);
             $code = $response->getStatusCode();
             if ($code === 200) {
@@ -126,7 +126,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $slug,
-                "lang_short_name" => $this->active_lang()->_LANG_SHORT_NAME
+                "lang_id" => $this->active_lang()->_ID
             ]]);
             $code = $response->getStatusCode();
             if ($code === 200) {
@@ -161,7 +161,7 @@ class API
                 "W-Private-Key" => $this->private_key,
             ], "query" => [
                 "slug" => $slug,
-                "lang_short_name" => $this->active_lang()->_LANG_SHORT_NAME
+                "lang_id" => $this->active_lang()->_ID
             ]]);
             $code = $response->getStatusCode();
             if ($code === 200) {
@@ -198,7 +198,7 @@ class API
                 "page" => $page,
                 "category_slug" => $slug,
                 "limit" => $limit,
-                "lang_short_name" => $this->active_lang()->_LANG_SHORT_NAME,
+                "lang_id" => $this->active_lang()->_ID,
             ]]);
 
             $code = $response->getStatusCode();
@@ -239,7 +239,7 @@ class API
                 "page" => $page,
                 "category_slug" => $slug,
                 "limit" => $limit,
-                "lang_short_name" => $this->active_lang()->_LANG_SHORT_NAME,
+                "lang_id" => $this->active_lang()->_ID,
             ]]);
 
             $code = $response->getStatusCode();
