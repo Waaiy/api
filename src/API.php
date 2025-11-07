@@ -412,6 +412,9 @@ class API
 
     public function cover_image($content, $media_url)
     {
+        if(!$content->_PHOTOS){
+            return null;
+        }
         if (is_string($content->_PHOTOS)) {
             $content->_PHOTOS = json_decode($content->_PHOTOS);
         }
