@@ -2,8 +2,10 @@
     "name": "waaiy/api",
     "description": "Waaiy API Connector",
     "type": "library",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "license": "MIT",
+    "keywords": ["waaiy", "headless", "cms", "api", "sdk"],
+    "homepage": "https://waaiy.dev/api",
     "authors": [
         {
             "name": "Omer Selman Anadolulu",
@@ -12,12 +14,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Waaiy\\":"src/"
+            "Waaiy\\": "src/"
         }
     },
     "require": {
         "php": ">=7.4",
         "guzzlehttp/guzzle": "^7.9",
-      "ext-json": "*"
+        "ext-json": "*"
     }
 }
