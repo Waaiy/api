@@ -99,8 +99,8 @@ Tazelemek için `languages(true)`.
 ## Ayarlar
 
 ```php
-$api->settings();            // tüm ayarlar {slug: deger}
-$api->adjust("site_basligi"); // tek ayar; tanımlı değilse null
+$api->settings();            // tüm ayarlar {slug: deger} — istek-içi memoized
+$api->adjust("site_basligi"); // tek ayar; tanımlı değilse null (aynı önbellekten okur)
 ```
 
 ## Menü
@@ -215,14 +215,39 @@ metinler Waaiy tarafında tutulur). Çeviriler `Dil.id` bazlıdır.
 
 ### Çevirileri okumak
 
+`translations()` **tek istekle TÜM aktif dilleri** döndürür — istediğin dili
+yerelde seçersin, dil başına istek atmazsın.
+
 ```php
-$ceviriler = $api->translations();              // aktif dil
-$ceviriler = $api->translations(5);             // 5 numaralı dil
-echo $ceviriler["form.post.add"];               // "Form Ekle"
+$tum = $api->translations();
+// ["form.post.add" => [3 => "Form Ekle", 5 => "Add Form"], ...]
+
+// Tek dile ait düz harita (ağa çıkmaz, önbellekten hesaplanır):
+$tr = $api->translation_map();      // aktif dil — {form.post.add: "Form Ekle", ...}
+$en = $api->translation_map(5);     // 5 numaralı dil
+
+echo $tr["form.post.add"];          // "Form Ekle"
+echo $en["form.post.add"];          // "Add Form"
 ```
 
-İstenen dilde değeri eksik olan anahtarlar varsayılan dilin değeriyle döner;
-pasif çeviriler haritaya girmez. Sonuç düz bir `{anahtar: metin}` dizisidir.
+İstenen dilde değeri eksik olan anahtarlar varsayılan dilin değeriyle doldurulur
+(fallback istemci tarafında uygulanır); pasif çeviriler hiç gelmez.
+
+**Tek istekle tümünü çek, yerlerine dağıt:** `translations()` sonucu istek
+boyunca bellekte tutulur. `translation()` ile çok sayıda anahtarı okusanız bile
+harita **ilk çağrıda bir kez** çekilir; kalan okumalar ağa çıkmaz.
+
+```php
+$ceviriler = $api->translations();   // 1 istek — tüm diller
+echo $ceviriler["menu.iletisim"][3];
+echo $api->translation_map(5)["menu.iletisim"];
+
+// ya da tek tek — ikinci çağrı da dahil ağa çıkmaz:
+echo $api->translation("menu.iletisim");
+echo $api->translation("form.post.add");
+```
+
+Önbelleği tazelemek için `translations(true)`.
 
 ### Otomatik kayıt (auto register)
 
@@ -376,6 +401,11 @@ Yeni:
   dilin değeriyle döner, varsayılan dil çevirisi zorunludur.
 - **Auto register**: `translation()` tek anahtarı okur, kayıtlı değilse verilen
   varsayılan metinle otomatik kaydeder ve aynı kaynaktan okur (get-or-create).
+- **Tek istekle tüm diller**: `GET /translations` artık tüm aktif dilleri tek
+  cevapta `{anahtar: {Dil.id: metin}}` olarak döndürür; `translations()`,
+  `translation_map()` ve `settings()` istek boyunca bellekte tutulur — çok
+  sayıda anahtar okunsa da harita yalnızca ilk çağrıda çekilir, sonraki okumalar
+  önbellekten yapılır. Auto-register sonrası önbellek yerelde güncellenir.
 
 Mevcut tüm metot adları, parametre sıraları ve dönüş şekilleri korunmuştur.
 

@@ -230,17 +230,21 @@ try { $api->sitemap(); ok('sitemap hata', false); }
 catch (\Exception $e) { ok('sitemap status=0 -> istisna', $e->getMessage() === 'Yetkisiz Erişim!'); }
 
 echo "\n== Onyuz Cevirileri ==\n";
-$ceviriler = ['status' => 1, 'data' => ['form.post.add' => 'Form Ekle', 'menu.anasayfa' => 'Ana Sayfa']];
+$ceviriler = ['status' => 1, 'data' => [
+    'form.post.add' => ['3' => 'Form Ekle', '5' => 'Add Form'],
+    'menu.anasayfa' => ['3' => 'Ana Sayfa'],
+]];
 $kayit = [];
-$api = mk([j($LANGS), j($ceviriler)], $kayit);
+$api = mk([j($ceviriler), j($LANGS)], $kayit);
 $t = $api->translations();
-ok('translations harita', is_array($t) && $t['form.post.add'] === 'Form Ekle');
-parse_str($kayit[1]['request']->getUri()->getQuery(), $q);
-ok('translations query lang_id', $q['lang_id'] == 3);
-$api5 = mk([j($ceviriler)]);
-ok('translations acik dil', $api5->translations(5)['menu.anasayfa'] === 'Ana Sayfa');
+ok('translations tum diller tek istekte', is_array($t) && $t['form.post.add'][3] === 'Form Ekle' && $t['form.post.add'][5] === 'Add Form');
+ok('translations istek sayisi (1)', count($kayit) === 1);
+ok('translation_map aktif dil', $api->translation_map()['form.post.add'] === 'Form Ekle');
+ok('translation_map acik dil', $api->translation_map(5)['form.post.add'] === 'Add Form');
+ok('translation_map bos dil varsayilana duser', $api->translation_map(99)['menu.anasayfa'] === 'Ana Sayfa');
+ok('translation_map istek yok (onbellekten)', count($kayit) === 2);
 
-$api = mk([j($LANGS), j(['status' => 1, 'data' => []])]);
+$api = mk([j(['status' => 1, 'data' => []])]);
 ok('translations bos -> []', $api->translations() === []);
 
 $kayit = [];
@@ -278,17 +282,17 @@ ok('translation auto-register govde', $body['anahtar'] === 'menu.iletisim' && $b
 $kayit = [];
 $api = mk([
     j($LANGS),
-    j(['status' => 1, 'data' => ['form.post.add' => 'Form Ekle']]),
+    j(['status' => 1, 'data' => ['form.post.add' => ['3' => 'Form Ekle']]]),
 ], $kayit);
 ok('translation mevcut anahtari okur', $api->translation('form.post.add', 'Varsayılan') === 'Form Ekle');
 ok('translation mevcut ise ekleme yok', count($kayit) === 2);
 
 // Varsayılan dilden farklı bir dille istek gelirse varsayılan dil de aynı metinle doldurulur.
-// Sıra: /translations → /languages (varsayılan dil id) → /translations/create
+// Sıra: /languages (varsayılan dil id) → /translations (boş) → /translations/create
 $kayit = [];
 $api = mk([
-    j(['status' => 1, 'data' => []]),
     j($LANGS),
+    j(['status' => 1, 'data' => []]),
     j(['status' => 1, 'message' => 'Çeviri Oluşturuldu!', 'data' => ['id' => 9]]),
 ], $kayit);
 ok('translation farkli dil varsayilani da doldurur', $api->translation('menu.iletisim', 'Contact', 5) === 'Contact');
@@ -303,6 +307,50 @@ $api = mk([
     j(['status' => 1, 'message' => 'Çeviri Oluşturuldu!', 'data' => ['id' => 9]]),
 ], $kayit);
 ok('translation varsayilan metin anahtar', $api->translation('form.post.add') === 'form.post.add');
+
+// --- Tek seferde çek, yerlerine dağıt (memoize) ---
+// Sıra: /translations → /languages (translation() dil için ister)
+$kayit = [];
+$api = mk([
+    j(['status' => 1, 'data' => ['a' => ['3' => 'A'], 'b' => ['3' => 'B']]]),
+    j($LANGS),
+], $kayit);
+$api->translations();
+$api->translations();
+ok('translations memoize (2 cagri, 1 istek)', count($kayit) === 1);
+$api->translation('a');
+$api->translation('b');
+ok('translation onbellekten okur (istek yok)', count($kayit) === 2);
+ok('translation onbellek degeri', $api->translation('a') === 'A');
+
+// Yenileme: translations(true) önbelleği atlar.
+$kayit = [];
+$api = mk([
+    j(['status' => 1, 'data' => ['a' => ['3' => 'A']]]),
+    j(['status' => 1, 'data' => ['a' => ['3' => 'A2'], 'b' => ['3' => 'B']]]),
+], $kayit);
+$api->translations();
+ok('translations yenileme yeni istek', $api->translations(true)['b'][3] === 'B');
+ok('translations yenileme istek sayisi', count($kayit) === 2);
+
+// Auto-register sonrası önbellek güncellenir; kalan okuma istek üretmez.
+$kayit = [];
+$api = mk([
+    j($LANGS),
+    j(['status' => 1, 'data' => []]),
+    j(['status' => 1, 'message' => 'Çeviri Oluşturuldu!', 'data' => ['id' => 9]]),
+], $kayit);
+ok('auto-register ilk okuma', $api->translation('yeni.anahtar', 'Yeni Metin') === 'Yeni Metin');
+ok('auto-register sonrasi onbellek', $api->translation('yeni.anahtar') === 'Yeni Metin');
+ok('auto-register sonrasi istek yok', count($kayit) === 3);
+
+// settings() de memoized — adjust() tek istekle çok ayar okur.
+$kayit = [];
+$api = mk([j(['status' => 1, 'data' => ['site_basligi' => 'Waaiy', 'site_aciklamasi' => 'x']])], $kayit);
+ok('settings memoize', $api->settings()->site_basligi === 'Waaiy');
+$api->settings();
+ok('settings ikinci cagri istek yok', $api->adjust('site_basligi') === 'Waaiy');
+ok('settings toplam istek', count($kayit) === 1);
 
 echo "\n== Hata kodlari ==\n";
 $api = mk([new Response(403, [], '{"message":"Yetkisiz"}')]);

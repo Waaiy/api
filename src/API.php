@@ -49,6 +49,12 @@ class API
     /** @var array|null /languages yanıtının istek-içi kopyası */
     private $_languages_cache = null;
 
+    /** @var object|null /settings yanıtının istek-içi kopyası */
+    private $_settings_cache = null;
+
+    /** @var array|null /translations yanıtının istek-içi kopyası (tüm diller) */
+    private $_translations_cache = null;
+
     /** @var object|null active_lang() sonucunun istek-içi kopyası */
     private $_active_lang_cache = null;
 
@@ -120,11 +126,19 @@ class API
      * GET /settings — tenant'ın tüm ayarlarını {slug: deger} olarak döndürür.
      * JSON tutulan ayarlar çözülmüş halde gelir.
      *
+     * Sonuç istek boyunca bellekte tutulur; her çağrıda ağa çıkılmaz.
+     * Tazelemek için settings(true).
+     *
+     * @param  bool  $yenile  true ise bellekteki kopya atlanır
      * @return object
      */
-    public function settings()
+    public function settings($yenile = false)
     {
-        return (object) $this->veri('GET', '/settings');
+        if ($yenile || $this->_settings_cache === null) {
+            $this->_settings_cache = (object) $this->veri('GET', '/settings');
+        }
+
+        return $this->_settings_cache;
     }
 
     // ---------------------------------------------------------------------
@@ -731,22 +745,51 @@ class API
     // ---------------------------------------------------------------------
 
     /**
-     * GET /translations — anahtar kelime => metin haritasını döndürür.
+     * GET /translations — TÜM aktif dillerin çeviri haritasını TEK istekle döndürür.
      *
-     * Çeviriler Dil.id bazlı tutulur; istenen dilde değeri eksik olan anahtarlar
-     * varsayılan dilin değeriyle döner (sunucu tarafında fallback uygulanır).
-     * Pasif (durum=0) çeviriler haritaya girmez.
+     * Dönen şekil: {anahtar: {Dil.id: metin}} — örn.
+     *   ["form.post.add" => [3 => "Form Ekle", 5 => "Add Form"], ...]
+     * Yalnızca dolu çeviriler girilir; boş diller ve pasif kayıtlar yoktur.
+     * Böylece frontend tümünü bir kez çeker, dili yerelde seçer (istek sayısı 1).
+     *
+     * Sonuç istek boyunca bellekte tutulur. Tazelemek için translations(true).
+     *
+     * @param  bool  $yenile  true ise bellekteki kopya atlanır
+     * @return array  {anahtar: {Dil.id: metin}}
+     */
+    public function translations($yenile = false)
+    {
+        if ($yenile || $this->_translations_cache === null) {
+            $data = $this->veri('GET', '/translations');
+            $this->_translations_cache = $this->translationsHarita($data);
+        }
+
+        return $this->_translations_cache;
+    }
+
+    /**
+     * Tek dile ait düz {anahtar: metin} haritasını döndürür.
+     *
+     * Ağa ÇIKMAZ: `translations()` önbelleğinden hesaplanır. İstenen dilde
+     * değeri boş olan anahtarlar varsayılan dilin değeriyle doldurulur.
      *
      * @param  int|null  $lang_id  verilmezse aktif dil kullanılır
      * @return array  {form.post.add: "Form Ekle", ...}
      */
-    public function translations($lang_id = null)
+    public function translation_map($lang_id = null)
     {
-        $data = $this->veri('GET', '/translations', ['query' => [
-            'lang_id' => $this->dilId($lang_id),
-        ]]);
+        $dilId = $this->dilId($lang_id);
+        $varsayilanDilId = $this->varsayilanDilId();
 
-        return is_array($data) ? $data : (array) $data;
+        $harita = [];
+        foreach ($this->translations() as $anahtar => $diller) {
+            $deger = $this->ceviriDeger($diller, $dilId, $varsayilanDilId);
+            if ($deger !== '') {
+                $harita[$anahtar] = $deger;
+            }
+        }
+
+        return $harita;
     }
 
     /**
@@ -797,21 +840,31 @@ class API
     public function translation($anahtar, $varsayilan = null, $lang_id = null)
     {
         $dilId = $this->dilId($lang_id);
-        $ceviriler = $this->translations($dilId);
+        $varsayilanDilId = $this->varsayilanDilId();
 
-        if (array_key_exists($anahtar, $ceviriler)) {
-            return $ceviriler[$anahtar];
+        $tum = $this->translations();
+        if (isset($tum[$anahtar])) {
+            $deger = $this->ceviriDeger($tum[$anahtar], $dilId, $varsayilanDilId);
+            if ($deger !== '') {
+                return $deger;
+            }
         }
 
         $metin = ($varsayilan === null) ? $anahtar : $varsayilan;
         $harita = [$dilId => $metin];
-
-        $varsayilanDilId = $this->varsayilanDilId();
         if ($varsayilanDilId !== null && (int) $dilId !== $varsayilanDilId) {
             $harita[$varsayilanDilId] = $metin;
         }
 
         $this->translation_create($anahtar, $harita);
+
+        // Auto-register sonrası yerel önbelleği güncelle; kalan okumalar istek atmasın.
+        if (! isset($this->_translations_cache[$anahtar]) || ! is_array($this->_translations_cache[$anahtar])) {
+            $this->_translations_cache[$anahtar] = [];
+        }
+        foreach ($harita as $id => $metinX) {
+            $this->_translations_cache[$anahtar][$id] = $metinX;
+        }
 
         return $metin;
     }
@@ -1049,6 +1102,28 @@ class API
         }
 
         return null;
+    }
+
+    /** /translations gövdesini {anahtar: [Dil.id => metin]} dizisine normalleştirir. */
+    private function translationsHarita($data)
+    {
+        $cikti = [];
+        foreach ($this->haritaya($data) as $anahtar => $diller) {
+            $cikti[$anahtar] = $this->haritaya($diller);
+        }
+
+        return $cikti;
+    }
+
+    /** Bir anahtarın dil haritasından istenen dilin değerini döndürür; boşsa varsayılana düşer. */
+    private function ceviriDeger(array $diller, $dilId, $varsayilanDilId)
+    {
+        $deger = $diller[$dilId] ?? null;
+        if (trim((string) $deger) === '' && $varsayilanDilId !== null && (string) $dilId !== (string) $varsayilanDilId) {
+            $deger = $diller[$varsayilanDilId] ?? null;
+        }
+
+        return (trim((string) $deger) === '') ? '' : $deger;
     }
 
     private function tipDogrula($tip)
