@@ -229,6 +229,81 @@ $api = mk([j(['status' => 0, 'message' => 'Yetkisiz Erişim!'])]);
 try { $api->sitemap(); ok('sitemap hata', false); }
 catch (\Exception $e) { ok('sitemap status=0 -> istisna', $e->getMessage() === 'Yetkisiz Erişim!'); }
 
+echo "\n== Onyuz Cevirileri ==\n";
+$ceviriler = ['status' => 1, 'data' => ['form.post.add' => 'Form Ekle', 'menu.anasayfa' => 'Ana Sayfa']];
+$kayit = [];
+$api = mk([j($LANGS), j($ceviriler)], $kayit);
+$t = $api->translations();
+ok('translations harita', is_array($t) && $t['form.post.add'] === 'Form Ekle');
+parse_str($kayit[1]['request']->getUri()->getQuery(), $q);
+ok('translations query lang_id', $q['lang_id'] == 3);
+$api5 = mk([j($ceviriler)]);
+ok('translations acik dil', $api5->translations(5)['menu.anasayfa'] === 'Ana Sayfa');
+
+$api = mk([j($LANGS), j(['status' => 1, 'data' => []])]);
+ok('translations bos -> []', $api->translations() === []);
+
+$kayit = [];
+$api = mk([j(['status' => 1, 'message' => 'Çeviri Oluşturuldu!', 'data' => ['id' => 5]])], $kayit);
+$s = $api->translation_create('form.post.add', [3 => 'Form Ekle', 5 => 'Add Form']);
+ok('translation_create', $s->id === 5 && $s->message === 'Çeviri Oluşturuldu!');
+parse_str((string) $kayit[0]['request']->getBody(), $body);
+ok('translation_create govde', $body['anahtar'] === 'form.post.add' && $body['ceviriler'][3] === 'Form Ekle' && $body['ceviriler'][5] === 'Add Form');
+ok('translation_create POST', $kayit[0]['request']->getMethod() === 'POST');
+
+$kayit = [];
+$api = mk([j(['status' => 1, 'message' => 'Çeviri Güncellendi!', 'data' => ['id' => 5]])], $kayit);
+$api->translation_create('form.post.add', [3 => 'Yeni'], 0);
+parse_str((string) $kayit[0]['request']->getBody(), $body);
+ok('translation_create durum', $body['durum'] == 0);
+
+$api = mk([j(['status' => 0, 'message' => 'Varsayılan dil çevirisi zorunludur!'])]);
+try { $api->translation_create('form.post.add', [5 => 'Add Form']); ok('varsayilan dil zorunlu', false); }
+catch (\Exception $e) { ok('varsayilan dil zorunlu hata mesaji', $e->getMessage() === 'Varsayılan dil çevirisi zorunludur!'); }
+
+// --- Auto register (get-or-create) ---
+// Anahtar yoksa: /languages → /translations (boş) → /translations/create
+$kayit = [];
+$api = mk([
+    j($LANGS),
+    j(['status' => 1, 'data' => []]),
+    j(['status' => 1, 'message' => 'Çeviri Oluşturuldu!', 'data' => ['id' => 9]]),
+], $kayit);
+ok('translation auto-register metin', $api->translation('menu.iletisim', 'İletişim') === 'İletişim');
+ok('translation auto-register POST yolu', $kayit[2]['request']->getUri()->getPath() === '/translations/create');
+parse_str((string) $kayit[2]['request']->getBody(), $body);
+ok('translation auto-register govde', $body['anahtar'] === 'menu.iletisim' && $body['ceviriler'][3] === 'İletişim');
+
+// Anahtar zaten varsa otomatik eklenmez; aynı kayıttan okunur.
+$kayit = [];
+$api = mk([
+    j($LANGS),
+    j(['status' => 1, 'data' => ['form.post.add' => 'Form Ekle']]),
+], $kayit);
+ok('translation mevcut anahtari okur', $api->translation('form.post.add', 'Varsayılan') === 'Form Ekle');
+ok('translation mevcut ise ekleme yok', count($kayit) === 2);
+
+// Varsayılan dilden farklı bir dille istek gelirse varsayılan dil de aynı metinle doldurulur.
+// Sıra: /translations → /languages (varsayılan dil id) → /translations/create
+$kayit = [];
+$api = mk([
+    j(['status' => 1, 'data' => []]),
+    j($LANGS),
+    j(['status' => 1, 'message' => 'Çeviri Oluşturuldu!', 'data' => ['id' => 9]]),
+], $kayit);
+ok('translation farkli dil varsayilani da doldurur', $api->translation('menu.iletisim', 'Contact', 5) === 'Contact');
+parse_str((string) $kayit[2]['request']->getBody(), $body);
+ok('translation varsayilan dil govdede', $body['ceviriler'][3] === 'Contact' && $body['ceviriler'][5] === 'Contact');
+
+// Varsayılan metin verilmezse anahtarın kendisi kaydedilir.
+$kayit = [];
+$api = mk([
+    j($LANGS),
+    j(['status' => 1, 'data' => []]),
+    j(['status' => 1, 'message' => 'Çeviri Oluşturuldu!', 'data' => ['id' => 9]]),
+], $kayit);
+ok('translation varsayilan metin anahtar', $api->translation('form.post.add') === 'form.post.add');
+
 echo "\n== Hata kodlari ==\n";
 $api = mk([new Response(403, [], '{"message":"Yetkisiz"}')]);
 try { $api->settings(); ok('403', false); }

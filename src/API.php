@@ -20,7 +20,7 @@ use GuzzleHttp\Client;
 class API
 {
     /** SDK sürümü — User-Agent'a yazılır. */
-    const SURUM = '2.0.0';
+    const SURUM = '2.1.0';
 
     /** İçerik uçlarında base64(JSON) olarak taşınan alanlar. */
     const PAKETLI_ALANLAR = ['_PHOTOS', '_VIDEOS', '_FILES', '_ACORDIONS', '_TABS', '_FIELDS'];
@@ -727,6 +727,96 @@ class API
     }
 
     // ---------------------------------------------------------------------
+    // Önyüz Çevirileri (tenant'ın websitesine sunduğumuz modül)
+    // ---------------------------------------------------------------------
+
+    /**
+     * GET /translations — anahtar kelime => metin haritasını döndürür.
+     *
+     * Çeviriler Dil.id bazlı tutulur; istenen dilde değeri eksik olan anahtarlar
+     * varsayılan dilin değeriyle döner (sunucu tarafında fallback uygulanır).
+     * Pasif (durum=0) çeviriler haritaya girmez.
+     *
+     * @param  int|null  $lang_id  verilmezse aktif dil kullanılır
+     * @return array  {form.post.add: "Form Ekle", ...}
+     */
+    public function translations($lang_id = null)
+    {
+        $data = $this->veri('GET', '/translations', ['query' => [
+            'lang_id' => $this->dilId($lang_id),
+        ]]);
+
+        return is_array($data) ? $data : (array) $data;
+    }
+
+    /**
+     * POST /translations/create — bir anahtar kelimenin çevirilerini ekler
+     * veya günceller (aynı anahtar varsa upsert).
+     *
+     * Varsayılan dilin çevirisi zorunludur; diğer diller boş bırakılabilir
+     * (panelde "eksik" olarak işaretlenir).
+     *
+     * @param  string    $anahtar     anahtar kelime (ör. form.post.add)
+     * @param  array     $ceviriler   {Dil.id: metin}
+     * @param  int|null  $durum       1=aktif (varsayılan), 0=pasif
+     * @return object    {id, message}
+     */
+    public function translation_create($anahtar, array $ceviriler, $durum = null)
+    {
+        $govde = [
+            'anahtar' => $anahtar,
+            'ceviriler' => $ceviriler,
+        ];
+        if ($durum !== null) {
+            $govde['durum'] = (int) $durum;
+        }
+
+        $yanit = $this->cagir('POST', '/translations/create', ['form_params' => $govde]);
+
+        $cikti = new \stdClass;
+        $cikti->id = isset($yanit->data->id) ? $yanit->data->id : null;
+        $cikti->message = isset($yanit->message) ? $yanit->message : '';
+
+        return $cikti;
+    }
+
+    /**
+     * Tek anahtarın çevirisini okur; anahtar kayıtlı DEĞİLSE otomatik olarak
+     * kaydeder (auto register) ve aynı kaynaktan (aynı tablo) okur.
+     *
+     * Akış: translations() ile haritayı okur → anahtar yoksa translation_create()
+     * ile varsayılan metinle kaydeder → metni döndürür. Sunucu varsayılan dil
+     * çevirisini zorunlu tuttuğu için, istenen dil varsayılan dilden farklıysa
+     * varsayılan dil de aynı metinle doldurulur.
+     *
+     * @param  string      $anahtar     anahtar kelime (ör. form.post.add)
+     * @param  string|null $varsayilan  anahtar yoksa kaydedilecek metin; null ise anahtarın kendisi
+     * @param  int|null    $lang_id     verilmezse aktif dil kullanılır
+     * @return string                   anahtarın metni
+     */
+    public function translation($anahtar, $varsayilan = null, $lang_id = null)
+    {
+        $dilId = $this->dilId($lang_id);
+        $ceviriler = $this->translations($dilId);
+
+        if (array_key_exists($anahtar, $ceviriler)) {
+            return $ceviriler[$anahtar];
+        }
+
+        $metin = ($varsayilan === null) ? $anahtar : $varsayilan;
+        $harita = [$dilId => $metin];
+
+        $varsayilanDilId = $this->varsayilanDilId();
+        if ($varsayilanDilId !== null && (int) $dilId !== $varsayilanDilId) {
+            $harita[$varsayilanDilId] = $metin;
+        }
+
+        $this->translation_create($anahtar, $harita);
+
+        return $metin;
+    }
+
+    // ---------------------------------------------------------------------
     // İç yardımcılar
     // ---------------------------------------------------------------------
 
@@ -947,6 +1037,18 @@ class API
     private function dilId($lang_id)
     {
         return ($lang_id === null) ? $this->lang_id() : (int) $lang_id;
+    }
+
+    /** languages() içinden varsayılan dilin id'si; bulunamazsa null. */
+    private function varsayilanDilId()
+    {
+        foreach ($this->languages() as $dil) {
+            if (isset($dil->_IS_DEFAULT) && (int) $dil->_IS_DEFAULT === 1) {
+                return (int) $dil->_ID;
+            }
+        }
+
+        return null;
     }
 
     private function tipDogrula($tip)

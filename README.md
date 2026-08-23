@@ -207,6 +207,62 @@ $api->cover_image_or_first($blog, "https://cdn.site.com");  // kapak yoksa ilk f
 
 ---
 
+## Önyüz Çevirileri
+
+Website önyüzünde kullanılan anahtar kelimelerin çevirileri bu modülden
+yönetilir (ör. anasayfa tasarımında `form.post.add` gibi anahtarlar kullanılır,
+metinler Waaiy tarafında tutulur). Çeviriler `Dil.id` bazlıdır.
+
+### Çevirileri okumak
+
+```php
+$ceviriler = $api->translations();              // aktif dil
+$ceviriler = $api->translations(5);             // 5 numaralı dil
+echo $ceviriler["form.post.add"];               // "Form Ekle"
+```
+
+İstenen dilde değeri eksik olan anahtarlar varsayılan dilin değeriyle döner;
+pasif çeviriler haritaya girmez. Sonuç düz bir `{anahtar: metin}` dizisidir.
+
+### Otomatik kayıt (auto register)
+
+`translation()` tek anahtarı **oku-ve-yoksa-kaydet** yapar. Anahtar kayıtlıysa
+değerini döndürür; değilse verilen varsayılan metinle otomatik olarak kaydeder
+(`/translations/create`) ve aynı kaynaktan okur. Özellikle tasarım sırasında
+henüz panelden eklenmemiş anahtarları kullanmak için idealdir — ilk okumada
+otomatik oluşur, sonraki okumalar aynı kaydı döndürür.
+
+```php
+// "menu.iletisim" yoksa "İletişim" ile otomatik kaydedilir ve döner.
+echo $api->translation("menu.iletisim", "İletişim");
+
+// Varsayılan metin verilmezse anahtarın kendisi kaydedilir.
+echo $api->translation("form.post.add");   // "form.post.add" (yoksa)
+
+// Belirli bir dilde okumak; varsayılan dil dışında bir dilse varsayılan dil de aynı metinle doldurulur.
+echo $api->translation("menu.iletisim", "Contact", 5);
+```
+
+Sunucu varsayılan dil çevirisini zorunlu tuttuğu için, auto register istenen
+dil varsayılan dilden farklıysa varsayılan dili de aynı metinle doldurur.
+
+### Çeviri eklemek / güncellemek
+
+```php
+$sonuc = $api->translation_create("form.post.add", [
+    3 => "Form Ekle",   // Dil.id => metin
+    5 => "Add Form",
+]);
+echo $sonuc->id;        // kaydın id'si
+echo $sonuc->message;   // "Çeviri Oluşturuldu!" | "Çeviri Güncellendi!"
+```
+
+Aynı anahtar zaten varsa güncellenir (upsert). **Varsayılan dilin çevirisi
+zorunludur** — eksikse istisna fırlatılır. İsteğe bağlı `$durum` (0|1) ile kaydı
+pasife alabilirsiniz.
+
+---
+
 ## Etkileşim uçları
 
 Bu üç POST ucu tasarım gereği herkese açıktır (modül izni aranmaz) ancak
@@ -309,6 +365,19 @@ Guzzle'ın `MockHandler`'ı ile çalışır — ağa çıkmaz, PHPUnit ve API an
 gerektirmez. 78 kontrol; çıkış kodu 0 = hepsi geçti.
 
 ---
+
+## 2.1 ile gelen değişiklikler
+
+Yeni:
+
+- Önyüz Çevirileri uçları: `translations()` (GET /translations) ve
+  `translation_create()` (POST /translations/create, upsert).
+  Çeviriler `Dil.id` bazlıdır; istenen dilde değeri eksik anahtarlar varsayılan
+  dilin değeriyle döner, varsayılan dil çevirisi zorunludur.
+- **Auto register**: `translation()` tek anahtarı okur, kayıtlı değilse verilen
+  varsayılan metinle otomatik kaydeder ve aynı kaynaktan okur (get-or-create).
+
+Mevcut tüm metot adları, parametre sıraları ve dönüş şekilleri korunmuştur.
 
 ## 2.0 ile gelen değişiklikler
 
