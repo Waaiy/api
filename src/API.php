@@ -62,7 +62,7 @@ class API
     private $_lang_id = null;
 
     /**
-     * @param  string  $base_url  API kök adresi (ör. https://api.waaiy.dev)
+     * @param  string  $base_url  API kök adresi (ör. https://api.waaiy.com)
      * @param  array   $options   public_key, private_key, user_key, verify,
      *                            timeout, connect_timeout, headers, handler
      *
