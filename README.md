@@ -19,7 +19,7 @@ Gereksinimler: PHP >= 7.4, `ext-json`, `guzzlehttp/guzzle ^7.9`.
 ```php
 use Waaiy\API;
 
-$api = new API("https://api.waaiy.dev", [
+$api = new API("https://api.waaiy.com", [
     "public_key"  => "...",   // W-Public-Key
     "private_key" => "...",   // W-Private-Key
     "user_key"    => "...",   // W-User-Key
@@ -29,7 +29,7 @@ $api = new API("https://api.waaiy.dev", [
 Eski (1.x) kullanım da geçerlidir:
 
 ```php
-$api = new API("https://api.waaiy.dev");
+$api = new API("https://api.waaiy.com");
 $api->public_key  = "...";
 $api->private_key = "...";
 $api->user_key    = "...";
